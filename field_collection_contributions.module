@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @file
+ * Module implementing a field-collection table formatter.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function field_collection_contributions_theme($existing, $type, $theme, $path) {
+  $base = array(
+    'file' => 'theme.inc',
+    'path' => $path . '/theme',
+  );
+  return array(
+    'field_collection_contributions_meter' => $base + array(
+      'variables' => array(
+        'current'  => array(),
+        'goal'     => array(),
+        'settings' => array(),
+        'entity'   => array(),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function field_collection_contributions_field_formatter_info() {
+  return array(
+    'field_collection_contributions_view' => array(
+      'label' => t('Contributions progress meter'),
+      'field types' => array('field_collection'),
+      'settings' =>  array(
+        'field_current' => t('Current'),
+        'field_goal' => t('Goal'),
+        'edit' => t('Edit'),
+        'delete' => t('Delete'),
+        'add' => t('Add'),
+        'description' => TRUE,
+        'view_mode' => 'full',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function field_collection_contributions_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  $settings = $display['settings'];
+  foreach($items as $item) {
+    $entities[] = field_collection_field_get_entity($item);
+  }
+
+  switch ($display['type']) {
+    case 'field_collection_contributions_view':
+      foreach($entities as $entity) {
+        $element['#theme'] = 'field_collection_contributions_meter';
+        $element['#current'] = $entity->{$settings['field_current']}['und'][0]['value'];
+        $element['#goal'] = $entity->{$settings['field_goal']}['und'][0]['value'];
+        $element['#settings'] = $settings;
+        $element['#entity'] = $entity;
+      }
+      break;
+  }
+
+  field_collection_field_formatter_links($element, $entity_type, $entity, $field, $instance, $langcode, $items, $display);
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function field_collection_contributions_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $elements = field_collection_field_formatter_settings_form($field, $instance, $view_mode, $form, $form_state);
+  $available_fields = _field_collection_contributions_field_collection_fields($field['field_name']);
+
+  if ($display['type'] == 'field_collection_contributions_view') {
+    $elements['field_current'] = array(
+      '#type' => 'select',
+      '#title' => t('Current'),
+      '#description' => t('Represents the current progress toward the goal.'),
+      '#options' => $available_fields,
+      '#default_value' => $settings['field_current'],
+    );
+    $elements['field_goal'] = array(
+      '#type' => 'select',
+      '#title' => t('Goal'),
+      '#description' => t('Represents the goal amount.'),
+      '#options' => $available_fields,
+      '#default_value' => $settings['field_goal'],
+    );
+  }
+  return $elements;
+}
+
+function _field_collection_contributions_field_collection_fields($field_name = '') {
+  $field_info = field_info_instances('field_collection_item', $field_name);
+  $available_fields = array();
+  foreach ($field_info as $key) {
+    $available_fields[$key['field_name']] = $key['label'];
+  }
+  return $available_fields;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function field_collection_contributions_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $available_fields = _field_collection_contributions_field_collection_fields($field['field_name']);
+
+  $output = field_collection_field_formatter_settings_summary($field, $instance, $view_mode);
+  if ($display['type'] == 'field_collection_contributions_view') {
+    $output .= '<br>';
+    $output .= !empty($settings['field_current']) ? t('Current Field: ') . $available_fields[$settings['field_current']] : t('Current Field: Not set.');
+    $output .= '<br>';
+    $output .= !empty($settings['field_goal']) ? t('Goal Field: ') . $available_fields[$settings['field_goal']] : t('Goal Field: Not set.');
+  }
+  return $output;
+}

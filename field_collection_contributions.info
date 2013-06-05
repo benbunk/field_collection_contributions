@@ -1,0 +1,5 @@
+name = Field Collection Contributions
+description = Provides a field-collection contributions formatter.
+core = 7.x
+configure = admin/config/user-interface/field_collection_table
+dependencies[] = field_collection

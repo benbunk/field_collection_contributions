@@ -1,0 +1,66 @@
+#commerce_contributions_meter{
+  background-image: url("../images/meter.jpg");
+    background-position: right center;
+    background-repeat: no-repeat;
+    height: 417px;
+    margin-top: 20px;
+    position: relative;
+    width: 170px;
+}
+
+#commerce_contributions_meter #commerce_contributions_contributions{
+  background-color: #FE0000;
+  bottom: 88px;
+  left: 98px;
+  position: absolute;
+  width: 45px;
+}
+
+#commerce_contributions_meter span{
+  position: absolute;
+  display: inline-block;
+}
+
+#commerce_contributions_meter #amount1{
+  bottom: 108px;
+}
+
+#commerce_contributions_meter #amount2{
+  bottom: 142px;
+}
+
+#commerce_contributions_meter #amount3{
+  bottom: 174px;
+}
+
+#commerce_contributions_meter #amount4{
+  bottom: 206px;
+}
+
+#commerce_contributions_meter #amount5{
+  bottom: 238px;
+}
+
+#commerce_contributions_meter #amount6{
+  bottom: 272px;
+}
+
+#commerce_contributions_meter #amount7{
+  bottom: 305px;
+}
+
+#commerce_contributions_meter #amount8{
+  bottom: 337px;
+}
+
+#commerce_contributions_meter #amount9{
+  bottom: 370px;
+}
+
+#commerce_contributions_meter #amount10{
+  bottom: 400px;
+}
+
+#commerce_contributions_meter #current_amount{
+  left: 160px;
+}
